@@ -1,0 +1,17 @@
+insert into scoreinfo(id, name, subject, score) values(10001, '张三', 'C++程序设计', 87.6)
+insert into scoreinfo(id, name, subject, score) values(10002, '李四', 'C++程序设计', 92.5)
+insert into scoreinfo(id, name, subject, score) values(10003, '王五', 'C++程序设计', 88)
+insert into scoreinfo(id, name, subject, score) values(10004, '赵六', 'C++程序设计', 79)
+insert into scoreinfo(id, name, subject, score) values(10005, 'Frank', 'C++程序设计', 82)
+
+insert into scoreinfo(id, name, subject, score) values(10001, '张三', '数据结构', 83.3)
+insert into scoreinfo(id, name, subject, score) values(10002, '李四', '数据结构', 85)
+insert into scoreinfo(id, name, subject, score) values(10003, '王五', '数据结构', 77.4)
+insert into scoreinfo(id, name, subject, score) values(10004, '赵六', '数据结构', 83.8)
+insert into scoreinfo(id, name, subject, score) values(10005, 'Frank', '数据结构', 91.5)
+
+insert into scoreinfo(id, name, subject, score) values(10001, '张三', '数据库系统原理', 84)
+insert into scoreinfo(id, name, subject, score) values(10002, '李四', '数据库系统原理', 82)
+insert into scoreinfo(id, name, subject, score) values(10003, '王五', '数据库系统原理', 93.2)
+insert into scoreinfo(id, name, subject, score) values(10004, '赵六', '数据库系统原理', 81)
+insert into scoreinfo(id, name, subject, score) values(10005, 'Frank', '数据库系统原理', 83.7)
