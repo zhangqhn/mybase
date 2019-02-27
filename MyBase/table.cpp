@@ -171,16 +171,16 @@ int Table::Close()
     this->pBase_ = nullptr;
   }
 
-  if (this->mapHandle_ != nullptr)
+  if (this->mapHandle_ != INVALID_HANDLE_VALUE)
   {
     CloseHandle(this->mapHandle_);
-    this->mapHandle_ = nullptr;
+    this->mapHandle_ = INVALID_HANDLE_VALUE;
   }
   
-  if (this->fileHandle_ != nullptr)
+  if (this->fileHandle_ != INVALID_HANDLE_VALUE)
   {
     CloseHandle(this->fileHandle_);
-    this->fileHandle_ = nullptr;
+    this->fileHandle_ = INVALID_HANDLE_VALUE;
   }
 
   tabName_ = "";
