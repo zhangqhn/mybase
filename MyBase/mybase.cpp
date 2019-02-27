@@ -42,14 +42,12 @@ void SourceFile(TableSet* pTabSet, const char* pFile);
 int main(int argc, char* argv[])
 {
   //将数据目录设置为应用程序所在目录
-  TCHAR szFilePath[MAX_PATH];
-  ::GetModuleFileName(NULL, szFilePath, MAX_PATH);
-  glbDataPath = szFilePath;
+  glbDataPath = argv[0];
   glbDataPath = glbDataPath.substr(0, glbDataPath.find_last_of('\\'));
 
   char readBuf[2048];
 
-  //初始化关键字
+  //初始化SQL关键字
   SQLTokenize::InitTokenize();
 
   std::cout << "MyBase 版本: " << pVersion << std::endl;
