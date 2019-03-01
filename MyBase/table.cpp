@@ -97,15 +97,17 @@ int Table::Create(const std::string& tabName, const CreateTableParam* pCreatePar
     return ER_IO_ERR;
   }
 
-  DWORD bytesWritten = 0;
-  WriteFile(tmpHandle, (LPCVOID)&mpage, sizeof(mpage), &bytesWritten, NULL);
   SetFilePointer(tmpHandle, TABLE_FILE_SIZE, 0, FILE_BEGIN);
   SetEndOfFile(tmpHandle);
+
+  DWORD bytesWritten = 0;
+  SetFilePointer(tmpHandle, 0, 0, FILE_BEGIN);
+  BOOL writeRet = WriteFile(tmpHandle, (LPCVOID)&mpage, sizeof(mpage), &bytesWritten, NULL);
+  DWORD lastErr = GetLastError();
   CloseHandle(tmpHandle);
-  if (sizeof(mpage) != bytesWritten)
+  if (!writeRet || sizeof(mpage) != bytesWritten)
   {
-    //Ð´ÎÄ¼þ´íÎó£¬É¾³ýÎÄ¼þ, ²¢·µ»Ø´íÎó
-    LOG_OUT("WriteFile Ê§°Ü, %d, %s", GetLastError(), filePath.c_str());
+    LOG_OUT("WriteFile Ê§°Ü, %d, %s", lastErr, filePath.c_str());
     DeleteFile(filePath.c_str());
     return ER_IO_ERR;
   }

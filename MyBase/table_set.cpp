@@ -62,7 +62,7 @@ int TableSet::LoadTables()
     {
       LOG_OUT("打开表 %s 失败", nameIt->c_str());
       delete pTab;
-      return ER_INIT_ERR;
+      continue;
     }
 
     uint64_t nameCrc = StringTool::Crc64NoCase(nameIt->c_str());
@@ -70,7 +70,7 @@ int TableSet::LoadTables()
     {
       LOG_OUT("打开表 %s 失败, 该表已存在", nameIt->c_str());
       delete pTab;
-      return ER_INIT_ERR;
+      continue;
     }
     tabSet_.insert(std::pair<uint64_t, Table*>(nameCrc, pTab));
   }
