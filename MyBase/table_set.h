@@ -43,5 +43,5 @@ private:
   void operator=(const TableSet&);
 
 private:
-  std::unordered_map<uint64_t, Table*> tabSet_;
+  std::unordered_map<std::string, Table*> tabSet_;
 };

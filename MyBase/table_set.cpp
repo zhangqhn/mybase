@@ -16,6 +16,7 @@
 #include "log.h"
 #include "error_code.h"
 #include <Windows.h>
+#include <algorithm>
 
 extern std::string glbDataPath;
 
@@ -65,14 +66,15 @@ int TableSet::LoadTables()
       continue;
     }
 
-    uint64_t nameCrc = StringTool::Crc64NoCase(nameIt->c_str());
-    if (tabSet_.find(nameCrc) != tabSet_.end())
+    std::string tabName = *nameIt;
+    std::transform(tabName.begin(), tabName.end(), tabName.begin(), ::tolower);
+    if (tabSet_.find(tabName) != tabSet_.end())
     {
-      LOG_OUT("打开表 %s 失败, 该表已存在", nameIt->c_str());
+      LOG_OUT("打开表 %s 失败, 该表已存在", tabName.c_str());
       delete pTab;
       continue;
     }
-    tabSet_.insert(std::pair<uint64_t, Table*>(nameCrc, pTab));
+    tabSet_.insert(std::pair<std::string, Table*>(tabName, pTab));
   }
 
   return ER_OK;
@@ -98,27 +100,29 @@ int TableSet::ShowTableColumns(const std::string& tabName, std::vector<ColInfo>&
 }
 int TableSet::CreateTable(const std::string& tabName, const CreateTableParam* pCreateParam, int* pErrPos)
 {
-  uint64_t nameCrc = StringTool::Crc64NoCase(tabName.c_str());
-  if (tabSet_.find(nameCrc) != tabSet_.end())
+  std::string tmpName = tabName;
+  std::transform(tmpName.begin(), tmpName.end(), tmpName.begin(), ::tolower);
+  if (tabSet_.find(tmpName) != tabSet_.end())
   {
     return ER_TABLE_EXISTS;
   }
 
   Table* pTable = new Table();
-  int retVal = pTable->Create(tabName, pCreateParam, pErrPos);
+  int retVal = pTable->Create(tmpName, pCreateParam, pErrPos);
   if (retVal != ER_OK)
   {
     delete pTable;
     return retVal;
   }
 
-  tabSet_.insert(std::pair<uint64_t, Table*>(nameCrc, pTable));
+  tabSet_.insert(std::pair<std::string, Table*>(tmpName, pTable));
   return ER_OK;
 }
 int TableSet::DropTable(const std::string& tabName)
 {
-  uint64_t nameCrc = StringTool::Crc64NoCase(tabName.c_str());
-  auto tabIt = tabSet_.find(nameCrc);
+  std::string tmpName = tabName;
+  std::transform(tmpName.begin(), tmpName.end(), tmpName.begin(), ::tolower);
+  auto tabIt = tabSet_.find(tmpName);
   if (tabIt == tabSet_.end())
     return ER_TABLE_NOT_FOUND;
 
@@ -158,8 +162,9 @@ int TableSet::Delete(const std::string& tabName, const DeleteParam* pDeleteParam
 
 Table* TableSet::GetTable(const char* pName)
 {
-  uint64_t nameCrc = StringTool::Crc64NoCase(pName);
-  auto tabIt = tabSet_.find(nameCrc);
+  std::string tmpName = pName;
+  std::transform(tmpName.begin(), tmpName.end(), tmpName.begin(), ::tolower);
+  auto tabIt = tabSet_.find(tmpName);
   if (tabIt == tabSet_.end())
     return nullptr;
 

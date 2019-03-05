@@ -15,6 +15,7 @@
 #include "sql_tokenize.h"
 #include "string_tool.h"
 #include "error_code.h"
+#include <algorithm>
 
 void* mydbParseAlloc(void*(*)(size_t));
 void mydbParseFree(void*p, void(*freeProc)(void*));
@@ -53,33 +54,33 @@ static const char isIdChar[] = {
 };
 
 static Keyword keywordTable[] = {
-  { "INSERT", TK_INSERT },
-  { "INTO", TK_INTO },
-  { "VALUES", TK_VALUES },
-  { "IS", TK_IS },
-  { "NOT", TK_NOT },
-  { "NULL", TK_NULL },
-  { "DELETE", TK_DELETE },
-  { "SHOW", TK_SHOW },
-  { "TABLES", TK_TABLES },
-  { "COLUMNS", TK_COLUMNS },
-  { "FROM", TK_FROM },
-  { "DROP", TK_DROP },
-  { "TABLE", TK_TABLE },
-  { "CREATE", TK_CREATE },
-  { "INT", TK_INT_TYPE },
-  { "DOUBLE", TK_DOUBLE_TYPE },
-  { "STRING", TK_STRING_TYPE },
-  { "SELECT", TK_SELECT },
-  { "WHERE", TK_WHERE },
-  { "GROUP", TK_GROUP },
-  { "BY", TK_BY },
-  { "LIMIT", TK_LIMIT },
-  { "AND", TK_AND },
-  { "LIKE", TK_LIKE },
+  { "insert", TK_INSERT },
+  { "into", TK_INTO },
+  { "values", TK_VALUES },
+  { "is", TK_IS },
+  { "not", TK_NOT },
+  { "null", TK_NULL },
+  { "delete", TK_DELETE },
+  { "show", TK_SHOW },
+  { "tables", TK_TABLES },
+  { "columns", TK_COLUMNS },
+  { "from", TK_FROM },
+  { "drop", TK_DROP },
+  { "table", TK_TABLE },
+  { "create", TK_CREATE },
+  { "int", TK_INT_TYPE },
+  { "double", TK_DOUBLE_TYPE },
+  { "string", TK_STRING_TYPE },
+  { "select", TK_SELECT },
+  { "where", TK_WHERE },
+  { "group", TK_GROUP },
+  { "by", TK_BY },
+  { "limit", TK_LIMIT },
+  { "and", TK_AND },
+  { "like", TK_LIKE },
 };
 
-std::unordered_map<uint64_t, int> SQLTokenize::keywordMap_;
+std::unordered_map<std::string, int> SQLTokenize::keywordMap_;
 
 void SQLTokenize::InitTokenize()
 {
@@ -88,8 +89,7 @@ void SQLTokenize::InitTokenize()
     int keyCnt = sizeof(keywordTable) / sizeof(keywordTable[0]);
     for (int i = 0; i < keyCnt; i++)
     {
-      uint64_t keyCrc = StringTool::Crc64NoCase(keywordTable[i].zName);
-      keywordMap_.insert(std::pair<uint64_t, int>(keyCrc, keywordTable[i].tokenType));
+      keywordMap_.insert(std::pair<std::string, int>(keywordTable[i].zName, keywordTable[i].tokenType));
     }
   }
 }
@@ -358,14 +358,10 @@ int SQLTokenize::GetToken(const unsigned char* z, size_t maxLen, int* tokenType)
 
 int SQLTokenize::GetKeywordType(const char* z, int n)
 {
-  const int maxKeyLen = 32;
+  std::string name = std::string(z, n);
+  std::transform(name.begin(), name.end(), name.begin(), ::tolower);
 
-  if (n >= maxKeyLen)
-    return TK_ID;
-
-  uint64_t tmpKey = StringTool::Crc64NoCase((const unsigned char*)z, n);
-
-  auto keyIter = keywordMap_.find(tmpKey);
+  auto keyIter = keywordMap_.find(name);
   if (keyIter != keywordMap_.end())
   {
     return keyIter->second;

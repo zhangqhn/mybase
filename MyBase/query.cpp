@@ -143,7 +143,7 @@ void RawQuery::AppendData(const std::vector<DBVal>& recVals)
 }
 
 ////////////////////////////////////////////////////////
-
+//
 GroupQuery::GroupQuery(int groupFieldPos)
 {
   this->groupFieldPos_ = groupFieldPos;
@@ -158,8 +158,6 @@ GroupQuery::~GroupQuery()
 
 void GroupQuery::AppendData(const std::vector<DBVal>& recVals)
 {
-  uint64_t groupKey = 0;
-
   if (pCondition_ != nullptr)
   {
     if (!pCondition_->RunCondition(recVals))
@@ -198,10 +196,11 @@ void GroupQuery::AppendData(const std::vector<DBVal>& recVals)
   }
   else
   {
+    std::string groupKey;
     if (VALUE_TYPE::VAL_INT == recVals[groupFieldPos_].valType_)
-      groupKey = static_cast<uint64_t>(recVals[groupFieldPos_].val_.intVal_);
+      groupKey = std::to_string(recVals[groupFieldPos_].val_.intVal_);
     else if (VALUE_TYPE::VAL_STRING == recVals[groupFieldPos_].valType_)
-      groupKey = StringTool::Crc64(recVals[groupFieldPos_].val_.strVal_, recVals[groupFieldPos_].dataLen_);
+      groupKey = std::string(recVals[groupFieldPos_].val_.strVal_, recVals[groupFieldPos_].dataLen_);
     else
       return;
 
@@ -225,7 +224,7 @@ void GroupQuery::AppendData(const std::vector<DBVal>& recVals)
       DataRec* pRec = new DataRec(targetVec_);
       pRec->AppendData(recVals);
       recVec_.push_back(pRec);
-      groupMap_.insert(std::pair<uint64_t, DataRec*>(groupKey, pRec));
+      groupMap_.insert(std::pair<std::string, DataRec*>(groupKey, pRec));
     }
   }
 

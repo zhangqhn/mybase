@@ -25,8 +25,8 @@ extern std::string glbDataPath;
 Table::Table()
 {
   this->fileHandle_ = INVALID_HANDLE_VALUE;
-  this->mapHandle_ = INVALID_HANDLE_VALUE;
-  this->pBase_ = nullptr;
+  this->mapHandle_ = NULL;
+  this->pBase_ = NULL;
 }
 
 Table::~Table()
@@ -156,8 +156,9 @@ int Table::Open(const char* pName)
   MetaPage* pMeta = (MetaPage*)pBase_;
   for (int i = 0; i < pMeta->colCnt_; i++)
   {
-    uint64_t nameCrc = StringTool::Crc64(pMeta->cols_[i].colName_);
-    colPosMap_.insert(std::pair<uint64_t, int>(nameCrc, i));
+    std::string colName = pMeta->cols_[i].colName_;
+    std::transform(colName.begin(), colName.end(), colName.begin(), ::tolower);
+    colPosMap_.insert(std::pair<std::string, int>(colName, i));
   }
 
   this->tabName_ = pName;
@@ -166,17 +167,17 @@ int Table::Open(const char* pName)
 
 int Table::Close()
 {
-  if (this->pBase_ != nullptr)
+  if (this->pBase_ != NULL)
   {
     FlushViewOfFile(this->pBase_, TABLE_FILE_SIZE);
     UnmapViewOfFile(this->pBase_);
-    this->pBase_ = nullptr;
+    this->pBase_ = NULL;
   }
 
-  if (this->mapHandle_ != INVALID_HANDLE_VALUE)
+  if (this->mapHandle_ != NULL)
   {
     CloseHandle(this->mapHandle_);
-    this->mapHandle_ = INVALID_HANDLE_VALUE;
+    this->mapHandle_ = NULL;
   }
   
   if (this->fileHandle_ != INVALID_HANDLE_VALUE)
@@ -774,8 +775,9 @@ int Table::BuildCondition(const ExprItem* pCondiExpr, Condition* pCondition, int
 
 int Table::GetFieldPos(const char* pName)
 {
-  uint64_t nameCrc = StringTool::Crc64NoCase(pName);
-  auto colIt = colPosMap_.find(nameCrc);
+  std::string name = pName;
+  std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+  auto colIt = colPosMap_.find(name);
   if (colIt != colPosMap_.end())
     return colIt->second;
 

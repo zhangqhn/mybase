@@ -93,9 +93,9 @@ public:
 private:
   int32_t groupFieldPos_;
   DataRec* pNullGroup_;    //null 组的数据
-  std::unordered_map<uint64_t, DataRec*> groupMap_;
+  std::unordered_map<std::string, DataRec*> groupMap_;
 
   //要跳过的分组，目前group by 后只能跟一个int或string字段
   bool skipNull_; // 是否跳过NULL值
-  std::unordered_set<uint64_t> skipGroup_;
+  std::unordered_set<std::string> skipGroup_;
 };

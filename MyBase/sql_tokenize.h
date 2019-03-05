@@ -16,6 +16,7 @@
 #include "sql_parser.h"
 #include "arena.h"
 #include <unordered_map>
+#include <string>
 
 class SQLTokenize
 {
@@ -31,5 +32,5 @@ private:
   static int GetToken(const unsigned char* z, size_t maxLen, int* tokenType);
   static int GetKeywordType(const char* z, int n);
 
-  static std::unordered_map<uint64_t, int> keywordMap_;
+  static std::unordered_map<std::string, int> keywordMap_;
 };

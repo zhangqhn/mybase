@@ -69,7 +69,7 @@ private:
   LPVOID pBase_;
 
   std::string tabName_;
-  std::unordered_map<uint64_t, int> colPosMap_;
+  std::unordered_map<std::string, int> colPosMap_;
 
 };
 
