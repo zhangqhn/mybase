@@ -217,7 +217,7 @@ int Table::Insert(const InsertParam* pInsertParam, int* pErrPos)
     return ER_SQL_ERR;
   }
 
-  int64_t intVal = 0;
+  int64_t int64Val = 0;
   double doubleVal = 0;
 
   for (size_t idx = 0; idx < nameVec.size(); idx++)
@@ -232,6 +232,7 @@ int Table::Insert(const InsertParam* pInsertParam, int* pErrPos)
       return ER_FIELD_NOT_FOUND;
     }
     int fieldType = pMeta->cols_[fieldPos].colType_;
+    char* pEnd = nullptr;
 
     const std::string& valStr = valVec[idx]->GetTokenStr();
     int valOp = valVec[idx]->GetOp();
@@ -240,7 +241,8 @@ int Table::Insert(const InsertParam* pInsertParam, int* pErrPos)
     case TK_UINTEGER:
     case TK_INTEGER:
     {
-      if (!StringTool::StrToInt64(valStr.c_str(), valStr.size(), &intVal))
+      int64Val = strtoll(valStr.c_str(), &pEnd, 10);
+      if (pEnd != (valStr.c_str() + valStr.size()))
       {
         if (pErrPos != nullptr)
           *pErrPos = valVec[idx]->GetSqlPos();
@@ -249,15 +251,15 @@ int Table::Insert(const InsertParam* pInsertParam, int* pErrPos)
       }
 
       if (valOp == TK_UINTEGER)
-        intVal *= -1;
+        int64Val *= -1;
 
       if (fieldType == VALUE_TYPE::VAL_INT)
       {
-        DBVAL_SET_INT(&(rec[fieldPos]), intVal);
+        DBVAL_SET_INT(&(rec[fieldPos]), int64Val);
       }
       else if (fieldType == VALUE_TYPE::VAL_DOUBLE)
       {
-        DBVAL_SET_DOUBLE(&(rec[fieldPos]), static_cast<double>(intVal));
+        DBVAL_SET_DOUBLE(&(rec[fieldPos]), static_cast<double>(int64Val));
       }
       else
       {
@@ -272,7 +274,8 @@ int Table::Insert(const InsertParam* pInsertParam, int* pErrPos)
     case TK_DOUBLE:
     case TK_UDOUBLE:
     {
-      if (!StringTool::StrToDouble(valStr.c_str(), valStr.size(), &doubleVal))
+      doubleVal = strtod(valStr.c_str(), &pEnd);
+      if (pEnd != (valStr.c_str() + valStr.size()))
       {
         if (pErrPos != nullptr)
           *pErrPos = valVec[idx]->GetSqlPos();
@@ -676,13 +679,15 @@ int Table::BuildCondition(const ExprItem* pCondiExpr, Condition* pCondition, int
       //两个操作数的条件，如: num > 5 等等
       const std::string& valueStr = pRightExpr->GetTokenStr();
       int32_t rightOp = pRightExpr->GetOp();
+      char* pEnd = nullptr;
 
       switch (rightOp)
       {
       case TK_INTEGER:
       case TK_UINTEGER:
       {
-        if (!StringTool::StrToInt64(valueStr.c_str(), valueStr.size(), &(rightVal.val_.intVal_)))
+        rightVal.val_.intVal_ = strtoll(valueStr.c_str(), &pEnd, 10);
+        if (pEnd != (valueStr.c_str() + valueStr.size()))
         {
           if (pErrPos != nullptr)
             *pErrPos = pRightExpr->GetSqlPos();
@@ -700,7 +705,8 @@ int Table::BuildCondition(const ExprItem* pCondiExpr, Condition* pCondition, int
       case TK_DOUBLE:
       case TK_UDOUBLE:
       {
-        if (!StringTool::StrToDouble(valueStr.c_str(), valueStr.size(), &(rightVal.val_.doubleVal_)))
+        rightVal.val_.doubleVal_ = strtod(valueStr.c_str(), &pEnd);
+        if (pEnd != (valueStr.c_str() + valueStr.size()))
         {
           if (pErrPos != nullptr)
             *pErrPos = pRightExpr->GetSqlPos();

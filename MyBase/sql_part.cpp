@@ -151,19 +151,14 @@ LimitOpt::LimitOpt(Token* pQueryCnt)
 {
   this->sqlPos_ = pQueryCnt->pos_;
   this->offset_ = 0;
-  this->queryCnt_ = -1;
-
-  StringTool::StrToInt64(pQueryCnt->str_, pQueryCnt->len_, &queryCnt_);
+  this->queryCnt_ = strtoll(pQueryCnt->str_, nullptr, 10);
 }
 
 LimitOpt::LimitOpt(Token* pOffset, Token* pQueryCnt)
 {
   this->sqlPos_ = pOffset->pos_;
-  this->offset_ = -1;
-  this->queryCnt_ = -1;
-
-  StringTool::StrToInt64(pOffset->str_, pOffset->len_, &offset_);
-  StringTool::StrToInt64(pQueryCnt->str_, pQueryCnt->len_, &queryCnt_);
+  this->offset_ = strtoll(pOffset->str_, nullptr, 10);
+  this->queryCnt_ = strtoll(pQueryCnt->str_, nullptr, 10);
 }
 
 LimitOpt::~LimitOpt()
