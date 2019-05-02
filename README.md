@@ -74,14 +74,8 @@ MyBase功能列表
 
   delete from \<tab-name\> [where-expr]
 
-# 关于我们
-MyBase由长沙巨松软件科技有限公司研发，并拥有完全、自主的知识产权。
+# 联系我
 
-长沙巨松软件科技有限公司
+  有任何问题欢迎与我联系，zhangqhn@foxmail.com
 
-(0731)8972 3801 , 186 1298 3652
-
-zhangqhn@foxmail.com
-
-http://www.mybase.vip
 
