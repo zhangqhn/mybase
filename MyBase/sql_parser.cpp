@@ -8,8 +8,6 @@
 **
 ** Author contact information:
 **   zhangqhn@foxmail.com
-**   长沙巨松软件科技有限公司
-**   http://www.mybase.vip
 */
 
 #include "sql_parser.h"

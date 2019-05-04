@@ -8,8 +8,6 @@
 **
 ** Author contact information:
 **   zhangqhn@foxmail.com
-**   长沙巨松软件科技有限公司
-**   http://www.mybase.vip
 */
 
 #include <iostream>
@@ -51,7 +49,6 @@ int main(int argc, char* argv[])
   SQLTokenize::InitTokenize();
 
   std::cout << "MyBase 版本: " << pVersion << std::endl;
-  std::cout << "长沙巨松软件科技有限公司 (C) 2019 http://www.mybase.vip" << std::endl;
 
   TableSet tabSet;
   if (tabSet.LoadTables() != 0)
@@ -183,7 +180,6 @@ int ExecuteSql(TableSet* pTabSet, const char* pSql, int* pErrPos)
 void ShowHelp()
 {
   std::cout << "MyBase 版本: " << pVersion << std::endl;
-  std::cout << "长沙巨松软件科技有限公司 (C) 2019 http://www.mybase.vip" << std::endl;
   std::cout << "CMD:" << std::endl;
   std::cout << "  ? | HELP       - 打印帮助信息" << std::endl;
   std::cout << "  CLS | CLEAR    - 清屏" << std::endl;
